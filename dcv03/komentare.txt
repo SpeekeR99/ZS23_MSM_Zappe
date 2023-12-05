@@ -1,0 +1,139 @@
+Muj algoritmus nahodneho vyberu:
+    D jako Dominik, D je ctvrte pismeno abecedy -> 4. sloupec = MVAP
+    1999 rok narozeni, hodne devitek :) -> 9. sloupec = RCHQ
+    Mam rad binarni soustavu -> 2. sloupec = RCSG
+
+Pri spusteni programu se vypise deskriptivni statistika (snad i hezky, zalezi na fontu, delano pro consolas (konzole))
+Moje hlavni poznatky z deskriptivni statistiky jsou:
+    Vybral jsem si celkem odlisne sloupce, co se hodnot tyce
+        MVAP (vazeny prumer prumeru a std) pres vsechny tridy = 2674 +/- 58
+        RCHQ (vazeny prumer prumeru a std) pres vsechny tridy =   57 +/- 8
+        RCSG (vazeny prumer prumeru a std) pres vsechny tridy = 1063 +/- 310
+    Vysledky testu normality (pouzil jsem Shapiro):
+        Pro granite se tvari alespon trochu normalne pouze RCSG
+        Pro diorite to vypada s p-hodnotami lepe
+        Marble vypada velice bidne pro vsechny vybrane charakteristiky
+        Slate je na tom podobne, ale MVAP se alespon trochu tvari normalne
+        Pro limestone to vypada pro RCSG velice normalne, RCHQ trochu, MVAP absolutne ne
+        Breccia je normalni pouze pro charakteristiku RCHQ
+        => Je tedy videt, ze Shapiro test naznacuje tak pul na pul normalitu / nenormalitu
+           Testy budou stejne provedeny jak parametricke, tak neparametricke, je vsak nutno
+           nezapominat na vysledky testu normality
+
+Spolu s deskriptivni statistikou se program zablokuje na 4 figurach, ktere vykresluji 1D data a jejich boxploty
+Po zbytek vizualizace bude dodrzena barevna konzistence:
+    granite = cervena; diorite = zelena; marble = modra; slate = zluta; limestone = magenta; breccia = cyan
+Z boxplotu je videt, ze:
+    MVAP: marble je ponekud zvlastni a ma hodne outlieru, jinak diorite, limestone a breccia vypadaji,
+          ze by mohly mit podobny prumer i rozptyl, vicemene se k nim da pridat i marble; granite je samotar
+    RCHQ: granite, diorite a marble jsou si podobni; limestone a breccia jsou si podobni, potencionalne s nimi
+          jeste marble; slate je zde rozdilny
+    RCSG: data jsou si rozptylem az na marble celkem podobna pres vsechny tridy, stredni hodnoty vice mene taky
+          mozna slate je zde trochu jiny, ma prumer celkem nizko
+    => 1D testy budou nejspise vychazet vice mene vzdy pro par trid kladne jak pro stredni hodnoty, tak pro rozptyly
+    Okometricke testy normality:
+        Granite vypada normalne
+        Diorite vypada normalne
+        Marble je trochu divny v MVAP, jinak normalni
+        Slate je divny v RCHQ, jinak normalni
+        Limestone vicemene normalni, az na MVAP
+        Breccia je normalni pouze v RCHQ, jinak celkem divna
+
+Po zavreni 1D vizualizacnich figur vyskoci vysledky 8 testu, z duvodu setreni figurami jsou vzdy charakteristiky
+davane do jedne figury jako 3 subploty; vysledky jsou vykresleny jak ve forme heatmapy v matici, tak ve forme
+kruhoveho grafu => 16 figur
+Dulezita poznamka pro cteni kruhovych grafu, kazda trida ma vlastni "sektor", ktery je rozdelen do sesti "kousku",
+pet kousku je "vystupnich" a sesty je "vstupni"; je tomu tak z duvodu prehlednosti, tedy spoj mezi kazdou tridou s
+kazdou dalsi je realizovan pres tyto "vystupy" a "vstupy"; sirka spojnice naznacuje velikost p-hodnoty
+Z vysledku testu je patrne:
+    Parametricky test stredni hodnoty - t-test: (figury 1, 2)
+        MVAP: diorite si je podobny se slate; breccia s limestone
+        RCHQ: granite s diorite; limestone s breccia
+        RCSG: zde si je podobnych vice trid, nejvice vsak limestone a slate; breccia a slate;limestone a breccia;
+              granite a diorite
+    Parametricky test stredni hodnoty - ANOVA (parova): (figury 3, 4)
+        Vysledky jsou totozne s vysledky paroveho t-testu
+    Neparametricky test stredni hodnoty - Kruskal-Wallis: (figury 5, 6)
+        MVAP: diorite se slate; breccia s limestone (vysledky jsou podobne jako parametricke)
+        RCHQ: granite s diorite; malinko breccia s limestone (opet podobne vysledky jako parametricke testy)
+        RCSG: nejvice breccia s limestone; breccia se slate; slate s marble; granite a diorite
+              (trochu jine vysledky nez parametricke)
+    Neparametricky test stredni hodnoty - Mann-Whitney: (figury 7, 8)
+        MVAP: podoba vice trid; nejvice diorote se slate; breccia s limestone (opet podobne vysledky)
+        RCHQ: granite s diorite nejvice; pak trochu limestone a breccia (opet podobne vysledky)
+        RCSG: podoba hodne trid; nejvice vsak breccia s limestone; breccia se slate; slate s marble; granite s diorite
+    => Zaver testu strednich hodnot je:
+        Vysledky parametrickych a neparametrickych testu jsou si vcelku podobne
+        MVAP: Diorite si je podobny se Slate; Breccia si je trochu podobna s Limestone
+        RCHQ: Granite si je podobny s Diorite; Breccia opet trochu podobna s Limestone
+        RCSG: Tridy jsou si podobne vice, nez u predchozi charakteristiky, nejvice jsou si vsak podobne:
+              Limestone se Slate; Breccia se Slate; Limestone s Breccia; Slate s Marble; Granite s Diorite
+    Parametricky test rozptylu - Bartlett: (figury 9, 10)
+        MVAP: diorite si je podobny s limestone a breccia
+        RCHQ: zde si je podobne vsechno se vsim, az na outsidera - slate; nejvice vsak diorite s limestone a granite
+        RCSG: nejvice podobne si jsou diorite s limestone a breccia a limestone s breccia
+    Parametricky test rozptylu - Levene (zalozen na parove ANOVE): (figury 11, 12)
+        MVAP: lehce podobne si jsou diorite s limestone a breccia
+        RCHQ: vse se vsim, az na slate (zase); nejvice granite s diorite a limestone
+        RCSG: limestone s diorite si jsou velice podobni; jinak breccia se vsim az na marble a slate
+    Neparametricky test rozptylu - Fligner-Killeen: (figury 13, 14)
+        MVAP: diorite si je podobny s limestone a trochu s breccia
+        RCHQ: vse se vsim, az na slate (opet); nejvice marble a breccia; granite s diorite a limestone
+        RCSG: hodne diorite s limestone a breccia; breccia jinak trochu s granite a limestone
+    Neparametricky test rozptylu - Levene (zalozen na Kruskal-Wallisovi): (figury 15, 16)
+        MVAP: diorite na pul s limestone, jinak nic moc
+        RCHQ: vse se vsim, ale mene nez predtim, slate je opet vynechan; nejvice granite s limestone a breccia
+        RCSG: limestone s diorite skoro p-hodnota 1; breccia hodne podobna s granite a diorite
+    => Zaver testu rozptylu je:
+        Vysledky parametrickych a neparametrickych testu jsou si opet podobne
+        MVAP: Diorite si je podobny s Limestone a trochu s Breccia
+        RCHQ: Slate je jiny nez ostatni tridy, ty jsou si mezi sebou dost podobne, nejvice vsak:
+              Granite s Diorite a Limestone; Marble s Breccia
+        RCSG: Diorite si je podobny s Limestone a Breccia
+=> Jak jsem jiz zminoval v kapitolce o boxplotech - v RCHQ byl slate velice rozdilny - vysledky testu to potvrzuji
+
+Po zavreni vysledku 1D testu se otevre vizualizace 2D dat (zatim bez elips) na 2 figury
+Z techto figur neumim rict nic zajimaveho; po jejich zavreni se vykresli 2D data s elipsami z minuleho ukolu na 6 figur
+(3 kombinace, jedna verze bez popisku Code z Excelu, druha verze s popisky)
+Co je videt z elips:
+    MVAP + RCHQ: (figura 1)
+        Je patrne, ze elipsy jsou ve stejnem smeru, ve smeru osy MVAP (az na slate, ten je trochu vychyleny)
+        Da se tedy predpokladat, ze si data budou opet vesmes podobna, az na slate (myslim si, ze to ovlivnuje
+        uz zpozorovana rozdilnost slate v charakteristice RCHQ)
+    MVAP + RCSG: (figura 2)
+        Zde jsou elipsy spise natazene ve smeru osy RCSG, ale jsou celkove vice kulate, zavisi vice i na MVAP
+        Slate se opet tvari trochu jinak nez zbytek
+    RCHQ + RCSG: (figura 3)
+        Zde jsou elipsy tak moc uzke a natazene ve smeru osy RCSG, ze z nich neni moc videt
+        Jediny co se da zpozorovat je opet rozdilnost slatu od ostatnich trid
+
+Po zavreni techto 2D figur se prejde k vyhodnoceni 2D testu a vykresleni jejich vysledku
+Vizualizace je opet stejna - heatmap matice + kruhove grafy, vykresli se 4 figury
+Z vysledku testu lze vypozorovat:
+    Parametricky test stredni hodnoty - chi2: (figura 1, 2)
+        MVAP + RCHQ: podobne si jsou pouze limestone a breccia
+        MVAP + RCSG: breccia a limestone jsou si hodne podobne; slate a diorite docela take
+        RCHQ + RCSG: granite s diorite jsou si podobni; limestone a breccia trochu take
+    Parametricky test rozptylu - chi2: (figura 3, 4)
+        MVAP + RCHQ: diorite si je docela podobny s breccia; mene, ale porad podobny jeste navic s limestone
+        MVAP + RCSG: diorite si je vice podobny s breccia a limestone
+        RCHQ + RCSG: breccia si je hodne podobna s diorite a limestone
+=> Zavery testu: Vice mene ocekavane vysledky vzhledem k zaverum z 1D testu, nebot kombinace drive zminenych podobnosti
+   se zde jen posilila, naopak slate, ktery uz si drive nebyl s nikym moc podobny prakticky uplne vypadl ze hry
+
+Po zavreni techto 4 figur se ve webovem prohlizeci otevrou dve zalozky - 3D vizualizace a 3D vizualizace s popisky
+Navic se k tomu otevrou v klasicky oknech dalsi 4 figury - vysledky 3D testu
+Z vizualizace 3D dat je videt:
+    Slate je opet uplne jinym smerem nez zbyle elipsoidy, az na granite, ktery by s nim mohl mit alespon podobny smer
+    Elipsoidy jsou vice mene v sobe, ale stale jsou videt rozdily, tezko rict, jestli jsou si v necem podobne
+    minimalne si takto z vizualizace myslim, ze by mohli mit podobne stredni hodnoty a rozptyly - konkretne
+    diorite, breccia a limestone mi pripadaji nejpodobnejsi (zelena, magenta a cyan)
+Vysledky 3D testu:
+    Parametricky test strednich hodnot - chi2: (figura 1, 2)
+        MVAP + RCHQ + RCSG:
+            Breccia si je celkem podobna s limestone; jinak prakticky nic
+    Parametricky test rozptylu - chi2: (figura 3, 4)
+        MVAP + RCHQ + RCSG:
+            Breccia si je podobna s diorite; lehce diorite s limestone; jinak nic
+=> Jak jsem jiz zminoval u vizualizace, Diorite, Breccia a Limestone jsou si celkem podobne elipsoidy, vysledky testu
+   to vcelku potvrzuji (stredni hodnoty - Breccia + Limestone; rozptyl - Breccia + Diorite a Diorite + Limestone)
